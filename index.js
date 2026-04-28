@@ -5,11 +5,10 @@ require('dotenv').config();
 
 const app = express();
 
-// 🛡️ SECURITY: Add your Vercel link here once you have it
 const allowedOrigins = [
   'http://localhost:8000',
   'http://localhost:5173',
-  'https://community-bridge-dwivedi.vercel.app' // Update this later
+  'https://community-bridge-dwivedi.vercel.app' 
 ];
 
 app.use(cors({
@@ -26,7 +25,11 @@ app.use(cors({
 
 app.use(express.json());
 
-// 🛰️ NODEMAILER CONFIG
+// --- MERGED LOGIC: TEST ROUTE ---
+app.get("/api/test", (req, res) => {
+  res.json({ message: "Grid Uplink Established" });
+});
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -35,7 +38,6 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// 📩 OTP ENDPOINT
 app.post('/api/send-otp', async (req, res) => {
   const { email, otp, name } = req.body;
   try {
@@ -52,8 +54,19 @@ app.post('/api/send-otp', async (req, res) => {
   }
 });
 
-// 🚀 RENDER DEPLOYMENT FIX
-// Do not change the order of these lines
+// --- MERGED LOGIC: TACTICAL GLOBAL ERROR HANDLER ---
+app.use((err, req, res, next) => {
+  console.error("NATIONAL GRID CRITICAL FAILURE:");
+  console.error(err.stack);
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    status: "error",
+    code: statusCode,
+    message: err.message || "Unexpected tactical condition.",
+    stack: process.env.NODE_ENV === 'development' ? err.stack : 'REDACTED'
+  });
+});
+
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`--- COMMAND NODE ONLINE ON PORT ${PORT} ---`);
