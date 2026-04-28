@@ -1,3 +1,4 @@
+// Version 2.0 - Merged Logic
 const express = require('express');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
