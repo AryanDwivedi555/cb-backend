@@ -5,12 +5,11 @@ require('dotenv').config();
 
 const app = express();
 
-// 🛡️ TACTICAL PERMISSION
-// Replace the Vercel link with your actual one once you have it!
+// 🛡️ SECURITY: Add your Vercel link here once you have it
 const allowedOrigins = [
   'http://localhost:8000',
   'http://localhost:5173',
-  'https://community-bridge-web.vercel.app' 
+  'https://community-bridge-dwivedi.vercel.app' // Update this later
 ];
 
 app.use(cors({
@@ -27,36 +26,35 @@ app.use(cors({
 
 app.use(express.json());
 
+// 🛰️ NODEMAILER CONFIG
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
+  service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false 
   }
 });
 
+// 📩 OTP ENDPOINT
 app.post('/api/send-otp', async (req, res) => {
-  const { email, otp, name, title } = req.body;
+  const { email, otp, name } = req.body;
   try {
     await transporter.sendMail({
-      from: `"National Grid Command" <${process.env.EMAIL_USER}>`,
+      from: `"Intelligence Hub" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: `MISSION AUTH CODE: ${otp}`,
-      html: `<h3>Code: ${otp}</h3><p>Agent: ${name}</p>`
+      text: `Greetings Agent ${name || 'Aryan'}. Your mission verification code is: ${otp}`,
     });
     res.status(200).json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Mail Error:", error);
+    res.status(500).json({ error: "Uplink Failed" });
   }
 });
 
-// 🚀 CRITICAL RENDER FIX: This must be at the very bottom
-const PORT = process.env.PORT || 10000; 
+// 🚀 RENDER DEPLOYMENT FIX
+// Do not change the order of these lines
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`--- COMMAND NODE ONLINE ON PORT ${PORT} ---`);
 });
