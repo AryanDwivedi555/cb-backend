@@ -10,6 +10,7 @@ const allowedOrigins = [
   'http://localhost:8000',
   'http://localhost:5173',
   'https://community-bridge-dwivedi.vercel.app' 
+  'community-bridge-project1211.vercel.app'
 ];
 
 app.use(cors({
